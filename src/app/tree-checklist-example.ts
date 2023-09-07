@@ -148,6 +148,9 @@ export class TreeChecklistExample {
     true /* multiple */
   );
 
+  // Array to store selected items
+  selectedItems: TodoItemFlatNode[] = [];
+
   constructor(private _database: ChecklistDatabase) {
     this.treeFlattener = new MatTreeFlattener(
       this.transformer,
@@ -261,15 +264,19 @@ export class TreeChecklistExample {
       ? this.checklistSelection.select(...descendants)
       : this.checklistSelection.deselect(...descendants);
 
-    // Force update for the parent
-    descendants.forEach((child) => this.checklistSelection.isSelected(child));
-    this.checkAllParentsSelection(node);
+    // Update the selected items
+    this.updateSelectedItems();
   }
 
   /** Toggle a leaf to-do item selection. Check all the parents to see if they changed */
   todoLeafItemSelectionToggle(node: TodoItemFlatNode): void {
     this.checklistSelection.toggle(node);
-    this.checkAllParentsSelection(node);
+    this.updateSelectedItems();
+  }
+
+  /** Update the selected items array */
+  updateSelectedItems(): void {
+    this.selectedItems = Array.from(this.checklistSelection.selected);
   }
 
   /* Checks all the parents when a leaf node is selected/unselected */
